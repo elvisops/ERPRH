@@ -1,1 +1,229 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+
+/* estilos personalizados */
+::ng-deep .mat-input-element {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+    border-radius: 4px;
+    padding: 0.75em 0.75em 0 0.75em;
+    border: 1px solid #f94747;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: transparent !important;
+}
+
+.mdc-text-field--filled::before .mdc-text-field {
+    background-color: transparent !important;
+}
+
+mat-card-header {
+    background-color: #12293f;
+    color: white;
+    padding: 5px 0px 5px 0px;
+    margin-bottom: 10px;
+}
+
+/*Colores*/
+
+.txtops-indigo {
+    color: #12293f !important;
+}
+
+.txtops-chartreuse {
+    color: #dfff00 !important;
+}
+
+.txtops-gray {
+    color: #616161 !important;
+}
+
+.txtwhite {
+    color: #FFFFFF !important;
+}
+
+.bgops-indigo {
+    background-color: #12293f !important;
+}
+
+.bgops-chartreuse {
+    background-color: #dfff00 !important;
+}
+
+.bgops-gray {
+    background-color: #616161 !important;
+}
+
+.bgwhite {
+    background-color: #FFFFFF !important;
+}
+
+.pull-to-end {
+    justify-content: flex-end;
+}
+
+/* estilos del circulo */
+/* .circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: gray;
+    margin: 0 auto;
+    background-color: #dfff00;
+}
+
+.center-icon {
+    font-size: 36px;
+    color: #12293f;
+} */
+
+.circle-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* background-color: gray; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: left;
+    background-color: #dfff00;
+}
+
+.circle-container2 {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* background-color: gray; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: left;
+    background-color: #12293f;
+}
+
+.center-icon {
+    font-size: 25px;
+    color: #12293f;
+}
+
+.content-wrapper {
+    margin-left: 6px;
+    /* Ajusta el espacio entre el círculo y el párrafo según sea necesario */
+}
+
+/* estilos sobra del card */
+.card {
+    border: 2px solid #979797 !important;
+    box-shadow: 0px 10px 10px #757575 !important;
+}
+
+/* estilos de las table */
+.mat-header-row {
+    background-color: #ff2121 !important;
+    /* Cambia el color de fondo del encabezado */
+}
+
+.mat-footer-row {
+    background-color: #ff2121 !important;
+    /* Cambia el color de fondo del pie de página */
+}
+
+/* table responsive */
+/* 
+  .responsive-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .responsive-table th,
+  .responsive-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  } */
+
+/* Ajustar la apariencia de la tabla en pantallas más pequeñas */
+/* @media (max-width: 600px) {
+    .responsive-table th,
+    .responsive-table td {
+      padding: 4px;
+    }
+  } */
+
+/* remarcar fila */
+.fila-vencida {
+    background-color: red !important;
+    /* Otros estilos que desees aplicar a la fila */
+}
+
+
+/* que el boton oculto no pierda la opacidad */
+/* input[disabled] {
+    opacity: 1; 
+    background-color: #f2f2f2; 
+    cursor: not-allowed; 
+    border: solid #000 1px;
+} */
+
+/* centrar input de imagen verticalmente */
+.containerImgHorizontal {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    /* Ajusta la altura del contenedor según tus necesidades */
+}
+
+.containerImgVertical {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    /* Ajusta la altura del contenedor según tus necesidades */
+}
+
+.vertical-center {
+    text-align: center;
+    /* Ajusta el alineamiento del contenido del div según tus necesidades */
+}
+
+/* input-requiered */
+
+/* ::ng-deep .error {
+    border: none !important;
+    background-color: transparent !important;
+    font-size: 1000px;
+} */
+
+/* .input-required {
+    margin-top: -20px;
+}
+
+*/
+
+.error {
+    /* border-color: red !important; */
+    color: red;
+    /* border: red solid 1px;
+    font-size: 50px; */
+    
+} 

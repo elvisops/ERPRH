@@ -1,0 +1,65 @@
+<mat-card style="max-height: 600px; overflow: auto">
+  <mat-card-header>
+    <mat-card-title class="txtwhite">
+      <h1>Activar Colaborador {{ nombre }} con id: {{ identidad }}</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- color del mat-hint -->
+        <mat-form-field color="primary" appearance="outline" class="w-100 my-2">
+          <mat-label
+            >Seleccione la Nueva fecha de Ingreso del Colaborador</mat-label
+          >
+          <input
+            matInput
+            [matDatepicker]="picker1"
+            [(ngModel)]="fechaIngreso"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker1"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker1 color="primary"></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-6">
+        <mat-form-field color="primary" appearance="outline" class="w-100 my-2">
+          <mat-label>Seleccione el fin del contrato Colaborador</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker2"
+            [(ngModel)]="fechaFin"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker2 color="primary"></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-12 my-4">
+        <p class="p-2" style="background-color: #ff9f9f">
+          La nueva fecha de ingreso sera la fecha de inicio de contrato
+        </p>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      class="bgops-indigo txtwhite mx-2"
+      (click)="ActivarColaborador()"
+    >
+      Activar
+    </button>
+    <button mat-raised-button color="warn" class="mx-2" (click)="CloseDialog()">
+      Cancelar
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,33 @@
+<div class="container mt-4 login-form-container">
+    <mat-card>
+        <mat-card-header>
+            <h1>Inicio de sesion</h1>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field class="w-100 my-4" appearance="outline">
+                <mat-label>Identidad o Codigo de Empleado</mat-label>
+                <input matInput type="text" autofocus [(ngModel)]="identidad" (ngModelChange)="setActive()">
+            </mat-form-field>
+
+            <mat-form-field class="w-100 my-4" appearance="outline">
+                <mat-label>Contraseña</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" [(ngModel)]="password" >
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide">
+                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    
+                </button>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions style="justify-content: flex-end;">
+            <button mat-raised-button class="bgops-indigo txtwhite pull-to-end" (click)="IniciarSesion()">
+                Iniciar Sesion
+            </button>
+        </mat-card-actions>
+    </mat-card>
+    <div *ngIf="inactive">
+        <div class="alert alert-danger">
+            <p>{{ inactiveMsg }}</p>
+        </div>
+    </div>
+</div>

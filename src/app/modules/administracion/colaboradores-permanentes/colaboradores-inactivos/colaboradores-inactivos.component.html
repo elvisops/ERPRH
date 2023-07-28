@@ -1,0 +1,279 @@
+<div class="container pb-4">
+  <mat-card class="card my-4">
+    <mat-card-header class="bgops-indigo">
+      <button
+          mat-icon-button
+          color="accent"
+          routerLink="/admin/mantenimientoempleados"
+        >
+          <mat-icon>keyboard_return</mat-icon>
+        </button>
+        <h1>Base de Colaboradores Inactivos</h1>
+      <mat-card-title class="txtwhite">
+        
+        
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Año</mat-label>
+            <mat-select [(ngModel)]="selectedYear">
+              <!-- <mat-option></mat-option> -->
+              <mat-option *ngFor="let year of years" [value]="year.VALOR">{{
+                year.TEXTO
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Mes</mat-label>
+            <mat-select [(ngModel)]="selectedMonth">
+              <!-- <mat-option></mat-option> -->
+              <mat-option *ngFor="let month of months" [value]="month.VALOR">{{
+                month.TEXTO
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Filtro</mat-label>
+            <mat-select [(ngModel)]="selectedFiltro">
+              <!-- <mat-option></mat-option> -->
+              <mat-option
+                *ngFor="let filtro of filtros"
+                [value]="filtro.VALOR"
+                >{{ filtro.TEXTO }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        class="bgops-indigo txtwhite mx-2"
+        (click)="MostrarDatos()"
+      >
+        Mostrar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="card p-2" [hidden]="!tabla">
+    <div class="table-responsive">
+      <mat-form-field class="w-100 mat-form-field-underline-none">
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="Filtrar($event)" #input />
+      </mat-form-field>
+      <button
+        class="bg-success text-white mx-1"
+        mat-button
+        (click)="exportTableAs('csv')"
+      >
+        CSV
+      </button>
+      <button
+        class="bg-info text-white mx-1"
+        mat-button
+        (click)="exportTableAs('xlsx')"
+      >
+        Excel
+      </button>
+      <button
+        class="bg-danger text-white mx-1"
+        mat-button
+        (click)="exportTableAs('pdf')"
+      >
+        PDF
+      </button>
+      <mat-paginator
+        [pageSizeOptions]="[10, 20, 50, 100]"
+        [pageSize]="10"
+        showFirstLastButtons=""
+      >
+      </mat-paginator>
+  
+      <table
+        id="tablaInactivos"
+        mat-table
+        [dataSource]="DataSource"
+        matSort
+        class="w-100 table responsive-table"
+      >
+        <ng-container matColumnDef="Accion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Accion</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-button-toggle-group>
+              <mat-button-toggle (click)="OpenDialogActivar(element)">
+                <mat-icon class="text-danger">not_interested</mat-icon>
+                Activar
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Historicos">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Historicos</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-button-toggle-group>
+              <mat-button-toggle (click)="OpenDialogHistorico(element)">
+                <mat-icon class="text-success">book</mat-icon>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="Observacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            Observacion
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Observacion }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Estatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Estatus</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Estatus }}
+            <!-- <div *ngIf="element.Estatus == 'D'"> -->
+            <!-- Renuncia -->
+            <!-- </div>  -->
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Motivo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Motivo</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Motivo }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="recontratacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            recontratacion
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.recontratacion }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="porque">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">porque</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.porque }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="FechaBaja">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">FechaBaja</th>
+          <td mat-cell *matCellDef="let element">
+            <!-- {{ element.FechaBaja }} -->
+            {{ element.FechaBaja | date:'dd/MM/YYYY' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Identidad">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Identidad</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Identidad }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Nombre</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Nombre }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="EstatusContrato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            EstatusContrato
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.EstatusContrato }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="tipo_compania">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            tipo_compania
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.tipo_compania }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Area">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Area</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Area }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Cartera">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Cartera</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Cartera }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Proyecto">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Proyecto</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Proyecto }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="FechaIngreso">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            FechaIngreso
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.FechaIngreso | date:'dd/MM/YYYY' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="InicioContrato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            InicioContrato
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.InicioContrato | date:'dd MMMM YYYY' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="FinContrato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            FinContrato
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.FinContrato | date:'dd MMMM YYYY'}}
+          </td> 
+        </ng-container>
+        <ng-container matColumnDef="FechaTransaccion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            FechaTransaccion
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.FechaTransaccion | date:'dd/MM/YYYY h:mm:ss a' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Telefonos">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Telefonos</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Telefonos }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Domicilio">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">Domicilio</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.Domicilio }}
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="Columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: Columnas"></tr>
+        <tr class="mat-row" *matNoDataRow="">
+          <td class="mat-cell" colspan="19">
+            No se encontraron datos para la tabla
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-card>
+</div>
+

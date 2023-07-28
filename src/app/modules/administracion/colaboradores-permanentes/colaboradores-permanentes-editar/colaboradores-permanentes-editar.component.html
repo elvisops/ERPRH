@@ -1,0 +1,684 @@
+<mat-card style="max-height: 600px; overflow: auto">
+    <mat-card-header>
+      <mat-card-title class="txtwhite">
+        <h1>Creacion de Colaborador</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row" style="min-height: 150px">
+        <div class="col-lg-6 containerImgHorizontal">
+          <div class="vertical-center">
+            <input
+              type="file"
+              accept="image/*"
+              #fileInput
+              (change)="handleFileInput($event)"
+            />
+          </div>
+        </div>
+        <div class="col-lg-6 containerImgVertical">
+          <div class="vertical-center my-2">
+            <div class=" ">
+              <!--  -->
+              <div *ngIf="previsualizacion === ''">
+                <img
+                  src="assets/no-photo.png"
+                  alt="Vista previa de la imagen"
+                  height="150px"
+                  style="max-width: 100%"
+                />
+              </div>
+              <div *ngIf="previsualizacion">
+                <img
+                  height="150px"
+                  style="max-width: 100%"
+                  [src]="previsualizacion"
+                  alt="Vista previa de la imagen"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <!-- <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Identidad</mat-label>
+            <input matInput type="text" [(ngModel)]="identidad"  />
+          </mat-form-field> -->
+  
+          <mat-form-field
+            appearance="outline"
+            class="w-100 my-2"
+            [ngClass]="{ error: identidadInvalida }"
+          >
+            <mat-label>Identidad</mat-label>
+            <input
+              matInput
+              type="text"
+              [(ngModel)]="identidad"
+              
+            />
+            <div>
+              <mat-error *ngIf="identidadInvalida && !identidad"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field
+            appearance="outline"
+            class="w-100 my-2"
+            [ngClass]="{ error: nombreInvalida }"
+          >
+            <mat-label>Nombre</mat-label>
+            <input
+              matInput
+              type="text"
+              [(ngModel)]="nombre"
+              
+              #nombreInput="ngModel"
+            />
+            <div>
+              <mat-error *ngIf="nombreInvalida && !nombre"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <!-- <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Puesto</mat-label>
+            <mat-select
+              [(ngModel)]="idPuesto"
+            >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let puestos of listaPuestos"
+                [value]="puestos.id"
+              >
+                {{ puestos.Puesto }} | Horas: {{ puestos.horas }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field> -->
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Puesto</mat-label>
+            <input
+              matInput
+              placeholder="Buscar puesto"
+              [(ngModel)]="searchTermPuesto"
+            />
+            <mat-select [(ngModel)]="idPuesto">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="
+                  let puestos of applyFilter(
+                    listaPuestos,
+                    searchTermPuesto,
+                    'Puesto'
+                  )
+                "
+                [value]="puestos.id"
+                
+              >
+                <!-- [value]="puestos.id" -->
+                {{ puestos.Puesto }} | Horas: {{ puestos.horas }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idPuestoInvalida && !idPuesto"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Profesion</mat-label>
+            <input matInput type="text" [(ngModel)]="profesion"  />
+            <div>
+              <mat-error *ngIf="profesionInvalida && !profesion"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Estado Civil</mat-label>
+            <mat-select [(ngModel)]="estadoCivil">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let estado of ListaEstadoCivil"
+                [value]="estado.ESTADO"
+                
+              >
+                {{ estado.ESTADO }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="estadoCivilInvalida && !estadoCivil"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Id Marcacion</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="idMarcacion"
+              
+              #nombreInput="ngModel"
+            />
+            <div>
+              <mat-error *ngIf="idMarcacionInvalida && !idMarcacion"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field color="accent" appearance="outline" class="w-100 my-2">
+            <mat-label>Fecha de Nacimiento</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker1"
+              [(ngModel)]="fechaNacimiento"
+              
+              #nombreInput="ngModel"
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker1"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker1 color="primary"></mat-datepicker>
+            <div>
+              <mat-error *ngIf="fechaNacimientoInvalida && !fechaNacimiento"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Marcador</mat-label>
+            <mat-select [(ngModel)]="marcador">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let marcador of listaMarcadores"
+                [value]="marcador.MARCADOR"
+                
+              >
+                {{ marcador.MARCADOR }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="marcadorInvalida && !marcador"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Telefonos</mat-label>
+            <input matInput type="text" [(ngModel)]="telefonos"  />
+            <div>
+              <mat-error *ngIf="telefonosInvalida && !telefonos"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Locker</mat-label>
+            <input matInput type="text" [(ngModel)]="locker"  />
+            <div>
+              <mat-error *ngIf="lockerInvalida && !locker"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Correo</mat-label>
+            <input matInput type="email" [(ngModel)]="correo" />
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Cod Empleado</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="codEmpleado"
+              [disabled]="true"
+            />
+            <!-- <input matInput type="number" [(ngModel)]="codEmpleado" [min]="codEmpleado" /> -->
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field color="accent" appearance="outline" class="w-100 my-2">
+            <mat-label>Fecha de Ingreso</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker2"
+              [(ngModel)]="fechaIngreso"
+              
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker2"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker2 color="primary"></mat-datepicker>
+            <div>
+              <mat-error *ngIf="fechaIngresoInvalida && !fechaIngreso"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Domicilio</mat-label>
+            <input matInput type="text" [(ngModel)]="domicilio"  />
+            <div>
+              <mat-error *ngIf="domicilioInvalida && !domicilio"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <!-- <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Area</mat-label>
+            <mat-select [(ngModel)]="idArea" (ngModelChange)="onAreaChange()">
+              <mat-option></mat-option>
+              <mat-option *ngFor="let areas of listaAreas" [value]="areas.idArea">
+                {{ areas.Area }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+        <!-- <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Area</mat-label>
+            <input matInput placeholder="Buscar área" [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()">
+            <mat-select [(ngModel)]="idArea" (ngModelChange)="onAreaChange()">
+              <mat-option></mat-option>
+              <mat-option *ngFor="let area of filteredAreas" [value]="area.idArea">
+                {{ area.Area }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Area</mat-label>
+            <input
+              matInput
+              placeholder="Buscar área"
+              [(ngModel)]="searchTermArea"
+            />
+            <mat-select [(ngModel)]="idArea" (ngModelChange)="onAreaChange()">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="
+                  let area of applyFilter(listaAreas, searchTermArea, 'Area')
+                "
+                [value]="area.idArea"
+                
+              >
+                {{ area.Area }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idAreaInvalida && !idArea"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <!-- Otros inputs utilizando sus respectivas variables searchTerm -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Cartera</mat-label>
+            <input
+              matInput
+              placeholder="Buscar cartera"
+              [(ngModel)]="searchTermCartera"
+            />
+            <mat-select
+              [(ngModel)]="idCartera"
+              (ngModelChange)="onCarteraChange()"
+            >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="
+                  let cartera of applyFilter(
+                    listaCarteras,
+                    searchTermCartera,
+                    'Cartera'
+                  )
+                "
+                [value]="cartera.idCartera"
+                
+              >
+                {{ cartera.Cartera }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idCarteraInvalida && !idCartera"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <!-- <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Cartera</mat-label>
+            <mat-select
+              [(ngModel)]="idCartera"
+              (ngModelChange)="onCarteraChange()"
+            >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let carteras of listaCarteras"
+                [value]="carteras.idCartera"
+              >
+                {{ carteras.Cartera }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+  
+        <!-- <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Proyecto</mat-label>
+            <mat-select
+              [(ngModel)]="idProyecto"
+              (ngModelChange)="onProyectoChange()"
+            >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let proyectos of listaProyectos"
+                [value]="proyectos.idProyecto"
+              >
+                {{ proyectos.Proyecto }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Proyecto</mat-label>
+            <input
+              matInput
+              placeholder="Buscar proyecto"
+              [(ngModel)]="searchTermProyecto"
+            />
+            <mat-select
+              [(ngModel)]="idProyecto"
+              (ngModelChange)="onProyectoChange()"
+            >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="
+                  let proyecto of applyFilter(
+                    listaProyectos,
+                    searchTermProyecto,
+                    'Proyecto'
+                  )
+                "
+                [value]="proyecto.idProyecto"
+                
+              >
+                {{ proyecto.Proyecto }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idProyectoInvalida && !idProyecto"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Supervisor</mat-label>
+            <input
+              matInput
+              placeholder="Buscar supervisor"
+              [(ngModel)]="searchTermSupervisor"
+            />
+            <mat-select [(ngModel)]="idSupervisor">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="
+                  let supervisor of applyFilter(
+                    listaSupervisores,
+                    searchTermSupervisor,
+                    'nombre'
+                  )
+                "
+                [value]="supervisor.id"
+                
+              >
+                {{ supervisor.nombre }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idSupervisorInvalida && !idSupervisor"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <!-- <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Supervisor</mat-label>
+            <mat-select [(ngModel)]="idSupervisor">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let proyectos of listaSupervisores"
+                [value]="proyectos.id"
+              >
+                {{ proyectos.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+  
+        <div class="col-lg-6">
+          <mat-form-field color="accent" appearance="outline" class="w-100 my-2">
+            <mat-label>Inicio de Permanencia</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker3"
+              [(ngModel)]="inicioPermanencia"
+              
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker3"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker3 color="primary"></mat-datepicker>
+            <div>
+              <mat-error *ngIf="inicioPermanenciaInvalida && !inicioPermanencia"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field color="accent" appearance="outline" class="w-100 my-2">
+            <mat-label>Fin Contrato</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker4"
+              [(ngModel)]="finContrato"
+              
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker4"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker4 color="primary"></mat-datepicker>
+            <div>
+              <mat-error *ngIf="finContratoInvalida && !finContrato"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Permiso Base Contratos</mat-label>
+            <mat-select [(ngModel)]="idPermisoContrato" >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let permisos of listaPermisosContratos"
+                [value]="permisos.id"
+              >
+                {{ permisos.nombre }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idPermisoContratoInvalida && !idPermisoContrato"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Permiso Red OPS</mat-label>
+            <mat-select [(ngModel)]="idPermisoRedOPS" >
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let permisosOPS of listaPermisosRedOPS"
+                [value]="permisosOPS.id"
+              >
+                {{ permisosOPS.nombre }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idPermisoRedOPSInvalida && !idPermisoRedOPS"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Salario</mat-label>
+            <input matInput type="number" [(ngModel)]="salario"  />
+            <div>
+              <mat-error *ngIf="salarioInvalida && !salario"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Tipo</mat-label>
+            <mat-select [(ngModel)]="idTipo" >
+              <mat-option></mat-option>
+              <mat-option *ngFor="let tipo of listaTipo" [value]="tipo.ID">
+                {{ tipo.TIPO }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idTipoInvalida && !idTipo"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Comision</mat-label>
+            <input matInput type="number" [(ngModel)]="comision"  />
+            <div>
+              <mat-error *ngIf="comisionInvalida && comision < 0"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Sexo</mat-label>
+            <mat-select [(ngModel)]="idSexo" >
+              <mat-option></mat-option>
+              <mat-option *ngFor="let sexo of listaSexo" [value]="sexo.ID">
+                {{ sexo.SEXO }}
+              </mat-option>
+            </mat-select>
+            <div>
+              <mat-error *ngIf="idSexoInvalida && !idSexo"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Hijos</mat-label>
+            <input matInput type="number" [(ngModel)]="hijos"  />
+            <div>
+              <mat-error *ngIf="hijosInvalida && hijos < 0"
+                >El campo es obligatorio*</mat-error
+              >
+            </div>
+          </mat-form-field>
+        </div>
+  
+        <div class="col-lg-12 w-100">
+          <mat-form-field appearance="outline" class="w-100 my-2">
+            <mat-label>Observacion</mat-label>
+            <textarea matInput rows="4" [(ngModel)]="observacion"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        class="bgops-indigo txtwhite mx-2"
+        type="submit"
+    
+      >
+        <!-- (click)="CrearColaborador()" -->
+        Crear
+      </button>
+      <button mat-raised-button color="warn" class="mx-2" (click)="CloseDialog()">
+        Cancelar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  
