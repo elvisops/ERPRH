@@ -13,13 +13,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ColaboradoresPermanentes } from '../colaboradores-permanentes';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { HttpClient } from '@angular/common/http';
+
+
+//formatear fecha
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-colaboradores-permanentes-editar',
   templateUrl: './colaboradores-permanentes-editar.component.html',
   styleUrls: ['./colaboradores-permanentes-editar.component.css']
 })
-export class ColaboradoresPermanentesEditarComponent implements OnInit{
+export class ColaboradoresPermanentesEditarComponent implements OnInit {
 
   estadoCivil: number | string = this.data.EstadoCivil;
   ListaEstadoCivil: any[] = [
@@ -58,13 +63,13 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
   idPermisoRedOPS: number = this.data.idPermiso;
   listaPermisosRedOPS: any[] = [];
 
-  idTipo: number = 0;
+  // idTipo: number = 0;
   listaTipo: any[] = [
     { ID: '1', TIPO: 'OPS CONTACT CENTER' },
     { ID: '2', TIPO: 'OUTSOURCING PARTNER SOLUTIONS' },
   ];
 
-  idSexo: number = 0;
+  // idSexo: number = 0;
   listaSexo: any[] = [
     { ID: '1', SEXO: 'Femenino' },
     { ID: '2', SEXO: 'Masculino' },
@@ -88,7 +93,10 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
   salario: number = this.data.salario;
   comision: number = this.data.comision;
   hijos: number = this.data.hijos;
-  observacion: string = this.data.Observacion;
+  observacion: string = this.data.Observaciones;
+  imagen: string = this.data.Imagen;
+  idTipo: number = this.data.tipo;
+  idSexo: number = this.data.sexo
 
   // vista de la imagen
   imageURL!: string;
@@ -96,7 +104,7 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
   // public archivos: any = [];
   public previsualizacion: string = '';
 
-  selectedFile: File | null = null;
+  selectedFile: File | null = this.data.Imagen;
 
   searchTermPuesto!: string;
   searchTermArea!: string;
@@ -140,7 +148,7 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
   idSexoInvalida: boolean = false;
   hijosInvalida: boolean = false;
 
-  @ViewChild(MatPaginator) paginator! : MatPaginator
+  @ViewChild(MatPaginator) paginator!: MatPaginator
   @ViewChild(MatSort) sort!: MatSort
   constructor(
     private dialogRef: MatDialogRef<ColaboradoresPermanentesEditarComponent>,
@@ -148,16 +156,43 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
     private auth: AuthService,
     private exportAsService: ExportAsService,
     private dialog: MatDialog,
+    private datePipe: DatePipe,
+    private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ){}
+  ) { }
 
-  listaColaboradorespermantentes : ColaboradoresPermanentes[] = [];
+  listaColaboradorespermantentes: ColaboradoresPermanentes[] = [];
   DataSource: MatTableDataSource<ColaboradoresPermanentes> = new MatTableDataSource();
-  Columnas: string[] = ['Historico','Accion','Identidad','Nombre','tipo','EstadoCivil','Estatus','cod_empleado','FechaModificacion','Locker','Area', 
-  'Cartera','Proyecto','supervisor','IdMarcacion','Marcador','FechaIngreso','InicioContrato','FinContrato','FechaNac']
-  
+  Columnas: string[] = ['Historico', 'Accion', 'Identidad', 'Nombre', 'tipo', 'EstadoCivil', 'Estatus', 'cod_empleado', 'FechaModificacion', 'Locker', 'Area',
+    'Cartera', 'Proyecto', 'supervisor', 'IdMarcacion', 'Marcador', 'FechaIngreso', 'InicioContrato', 'FinContrato', 'FechaNac']
+
 
   ngOnInit(): void {
+    // console.log(this.imagen)
+    // borrar
+    // Ejemplo de la cadena que contiene la ruta de la imagen
+    // const rutaImagen = 'images/Personal/0801-1997-01692.jpg';
+    const rutaImagen = this.imagen;
+
+    // Expresión regular para extraer el nombre del archivo
+    const expresionRegular = /images\/Personal\/(.+)$/;
+
+    // Aplicar la expresión regular a la cadena
+    const coincidencia = rutaImagen.match(expresionRegular);
+
+    // Verificar si hay una coincidencia y obtener el nombre del archivo
+    if (coincidencia && coincidencia.length > 1) {
+      const nombreArchivo = coincidencia[1];
+      this.imagen = nombreArchivo
+      console.log(nombreArchivo);
+    } 
+    // else {
+    //   console.log('No se encontró un nombre de archivo válido en la cadena.');
+    // }
+    //
+
+    this.previsualizacion = "http://10.8.8.115:3001/image/" + this.imagen + "";
+    // console.log(this.identidad)
     this.genListaPuestos()
     this.genListaPuestos()
     this.genAreas()
@@ -166,7 +201,10 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
     this.genListaSupervisores()
     this.genListaPermisosRedOPS()
     this.genListaPermisosContratos()
+
+    
   }
+
 
   genCodEmpleado() {
     this.service.getCodEmpleado().subscribe((r) => {
@@ -265,7 +303,7 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
     }
   }
 
-  
+
   applyFilter(data: any[], searchTerm: string, property: string): any[] {
     if (searchTerm) {
       return data.filter((item) =>
@@ -276,11 +314,338 @@ export class ColaboradoresPermanentesEditarComponent implements OnInit{
     }
   }
 
-  CloseDialog(){
+
+  ValidarInpust() {
+    if (!this.identidad) {
+      this.identidadInvalida = true;
+    }
+    if (!this.nombreInvalida) {
+      this.nombreInvalida = true;
+    }
+    
+    if (!this.idPuestoInvalida) {
+      this.idPuestoInvalida = true;
+    }
+
+    if (!this.profesionInvalida) {
+      this.profesionInvalida = true;
+    }
+
+    if (!this.estadoCivilInvalida) {
+      this.estadoCivilInvalida = true;
+    }
+
+    if (!this.idMarcacionInvalida) {
+      this.idMarcacionInvalida = true;
+    }
+
+    if (!this.fechaNacimientoInvalida) {
+      this.fechaNacimientoInvalida = true;
+    }
+
+    if (!this.marcadorInvalida) {
+      this.marcadorInvalida = true;
+    }
+
+    if (!this.telefonosInvalida) {
+      this.telefonosInvalida = true;
+    }
+
+    if (!this.lockerInvalida) {
+      this.lockerInvalida = true;
+    }
+
+    if (!this.codEmpleadoInvalida) {
+      this.codEmpleadoInvalida = true;
+    }
+
+    if (!this.fechaIngresoInvalida) {
+      this.fechaIngresoInvalida = true;
+    }
+
+    if (!this.domicilioInvalida) {
+      this.domicilioInvalida = true;
+    }
+
+    if (!this.idAreaInvalida) {
+      this.idAreaInvalida = true;
+    }
+
+    if (!this.idCarteraInvalida) {
+      this.idCarteraInvalida = true;
+    }
+
+    if (!this.idProyectoInvalida) {
+      this.idProyectoInvalida = true;
+    }
+
+    if (!this.idSupervisorInvalida) {
+      this.idSupervisorInvalida = true;
+    }
+
+    if (!this.inicioPermanenciaInvalida) {
+      this.inicioPermanenciaInvalida = true;
+    }
+
+    if (!this.inicioPermanenciaInvalida) {
+      this.inicioPermanenciaInvalida = true;
+    }
+
+    if (!this.finContratoInvalida) {
+      this.finContratoInvalida = true;
+    }
+
+    if (!this.idPermisoContratoInvalida) {
+      this.idPermisoContratoInvalida = true;
+    }
+
+    if (!this.idPermisoRedOPSInvalida) {
+      this.idPermisoRedOPSInvalida = true;
+    }
+
+    if (!this.salarioInvalida) {
+      this.salarioInvalida = true;
+    }
+
+    if (!this.idTipoInvalida) {
+      this.idTipoInvalida = true;
+    }
+
+    if (!this.comisionInvalida) {
+      this.comisionInvalida = true;
+    }
+
+    if (!this.idSexoInvalida) {
+      this.idSexoInvalida = true;
+    }
+
+    if (!this.hijosInvalida) {
+      this.hijosInvalida = true;
+    }
+    if (
+      this.identidad === '' ||
+      this.nombre === '' ||
+      this.idPuesto <= 0 ||
+      this.profesion === '' ||
+      this.estadoCivil === '' ||
+      this.idMarcacion === '' ||
+      this.fechaNacimiento === '' ||
+      this.marcador === '' ||
+      this.telefonos === '' ||
+      this.locker === '' ||
+      // this.correo === '' ||
+      this.codEmpleado <= 0 ||
+      this.fechaIngreso === '' ||
+      this.domicilio === '' ||
+      this.idArea <= 0 ||
+      this.idCartera <= 0 ||
+      this.idProyecto <= 0 ||
+      this.idSupervisor <= 0 ||
+      !this.inicioPermanencia ||
+      !this.finContrato ||
+      this.idPermisoContrato <= 0 ||
+      this.idPermisoRedOPS <= 0 ||
+      this.salario <= 0 ||
+      this.idTipo <= 0 ||
+      this.comision < 0 ||
+      this.idSexo <= 0 ||
+      this.hijos < 0
+    ) {
+      this.service.notificacion('Debe llenar los campos del formularia');
+      return;
+    }
+
+    if(this.selectedFile == null){
+      this.service.notificacion('Debe seleccionar una imagen para el empleado');
+      return;
+    }
+
+
+    // this.CrearColaborador();
+    this.guardarColaborador();
+  }
+
+  guardarColaborador() {
+    // formatear las fechas
+    // this.fechaIng = this.datePipe.transform(this.fechaIngreso, 'yyyy-MM-dd') ?? '';
+    // this.fechaF = this.datePipe.transform(this.fechaFin, 'yyyy-MM-dd') ?? '';
+    // this.fechaNacimiento,this.fechaIngreso
+    this.fechaNacimiento =
+      this.datePipe.transform(this.fechaNacimiento, 'yyyy-MM-dd') ?? '';
+    this.fechaIngreso =
+      this.datePipe.transform(this.fechaIngreso, 'yyyy-MM-dd') ?? '';
+    this.inicioPermanencia =
+      this.datePipe.transform(this.inicioPermanencia, 'yyyy-MM-dd') ?? '';
+    this.finContrato =
+      this.datePipe.transform(this.finContrato, 'yyyy-MM-dd') ?? '';
+
+    if (this.selectedFile == null || this.selectedFile == undefined) {
+      this.generarNombreImagen();
+      // console.log("genera NOmbre Imagen")
+    }
+    // console.log(this.imagen)
+    if (this.imageURL == "" || this.imageURL == null || this.imageURL == undefined) {
+      this.imageURL = this.imagen
+    }
+    // const urlImg = './imagenes/contratos/personal';
+
+    // this.service.notificacion('Guardar empleado');
+    this.puesto;
+    this.service
+      .EditarColaborador(
+        this.identidad,
+        this.nombre,
+        this.idPuesto,
+        this.profesion,
+        this.estadoCivil,
+        this.idMarcacion,
+        this.fechaNacimiento,
+        this.marcador,
+        this.telefonos,
+        this.locker,
+        this.correo,
+        this.codEmpleado,
+        this.fechaIngreso,
+        this.domicilio,
+        this.idArea,
+        this.idCartera,
+        this.idProyecto,
+        this.idSupervisor,
+        this.inicioPermanencia,
+        this.finContrato,
+        this.idPermisoContrato,
+        this.idPermisoRedOPS,
+        this.salario,
+        this.idTipo,
+        this.comision,
+        this.idSexo,
+        this.hijos,
+        this.observacion,
+        this.imageURL
+      )
+      .subscribe((r) => {
+        var respuesta = this.auth.desencriptar(r.response);
+
+        respuesta = JSON.parse(respuesta);
+        // console.log(respuesta.message)
+
+        if (respuesta[0].status === 1) {
+          this.service.notificacion(respuesta[0].message);
+          console.log(this.selectedFile)
+          if (this.selectedFile !== null || this.selectedFile !== undefined) {
+            this.uploadImage();
+          }
+          
+          // this.LimpiarInputs();
+          // this.genCodEmpleado();
+        } else {
+          this.service.notificacion(respuesta[0].message);
+        }
+      });
+
+    // // si se guarda el empleado guardar la imagen
+    // this.uploadImage()
+  }
+
+  generarNombreImagen() {
+    // if (this.selectedFile == null) {
+    //   this.selectedFile = this.imagen
+    // }
+    if (this.selectedFile) {
+      const fileNameParts = this.selectedFile.name.split('.');
+      const fileExtension =
+        fileNameParts[fileNameParts.length - 1].toLocaleLowerCase();
+      this.imageURL = this.identidad + '.' + fileExtension; // Cambio de nombre de la imagen
+      // alert(this.imageURL)
+    }
+  }
+
+  uploadImage() {
+    
+    if (this.selectedFile) {
+      const formData = new FormData();
+      // const fileNameParts = this.selectedFile.name.split('.');
+      // const fileExtension =
+      //   fileNameParts[fileNameParts.length - 1].toLocaleLowerCase();
+      // const newFileName = this.identidad + '.' + fileExtension; // Cambio de nombre de la imagen
+      formData.append('image', this.selectedFile, this.imageURL);
+
+      this.http.post<any>('http://10.8.8.115:3001/upload', formData).subscribe(
+        (response) => {
+          console.log('Imagen subida con éxito');
+        },
+        (error) => {
+          console.error('Error al subir la imagen:', error);
+        }
+      );
+    }
+  }
+
+  LimpiarInputs(){
+    this.identidad = ""
+    this.nombre = ""
+    this.idPuesto = 0
+    this.profesion = ""
+    this.estadoCivil = ""
+    this.idMarcacion = ""
+    this.fechaNacimiento = ""
+    this.marcador = ""
+    this.telefonos = ""
+    this.locker = ""
+    this.correo = ""
+    this.codEmpleado = 0
+    this.fechaIngreso = ""
+    this.domicilio = ""
+    this.idArea = 0
+    this.idCartera = 0
+    this.idProyecto = 0
+    this.idSupervisor = 0
+    this.inicioPermanencia = ""
+    this.finContrato = ""
+    this.idPermisoContrato = 0
+    this.idPermisoRedOPS = 0
+    this.salario = 0
+    this.idTipo = 0
+    this.comision = 0
+    this.idSexo = 0
+    this.hijos = 0
+    this.observacion = ""
+    this.imageURL = ""
+    this.selectedFile = null
+    this.previsualizacion = ""
+    this.identidadInvalida = false
+    this.nombreInvalida = false
+    this.idPuestoInvalida = false
+    this.profesionInvalida = false
+    this.estadoCivilInvalida = false
+    this.idMarcacionInvalida = false
+    this.fechaNacimientoInvalida = false
+    this.marcadorInvalida = false
+    this.telefonosInvalida = false
+    this.lockerInvalida = false
+    this.codEmpleadoInvalida = false
+    this.fechaIngresoInvalida = false
+    this.domicilioInvalida = false
+    this.idAreaInvalida = false
+    this.idCarteraInvalida = false
+    this.idProyectoInvalida = false
+    this.idSupervisorInvalida = false
+    this.inicioPermanenciaInvalida = false
+    this.finContratoInvalida = false
+    this.idPermisoContratoInvalida = false
+    this.idPermisoRedOPSInvalida = false
+    this.salarioInvalida = false
+    this.idTipoInvalida = false
+    this.comisionInvalida = false
+    this.idSexoInvalida = false
+    this.hijosInvalida = false
+  }
+
+  CloseDialog() {
     this.dialogRef.close()
   }
 
-  Filtrar(evt: Event){
+  Filtrar(evt: Event) {
     const valorFiltrado = (evt.target as HTMLInputElement).value
     this.DataSource.filter = valorFiltrado.trim().toLocaleLowerCase()
     if (this.DataSource.paginator) {

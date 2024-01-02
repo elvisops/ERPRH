@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ColaboradoresPermanentesCrearComponent } from './colaboradores-permanentes-crear/colaboradores-permanentes-crear.component';
 import { HistoricoColaboradoresInactivosComponent } from './colaboradores-inactivos/historico-colaboradores-inactivos/historico-colaboradores-inactivos.component';
 import { ColaboradoresPermanentesEditarComponent } from './colaboradores-permanentes-editar/colaboradores-permanentes-editar.component';
-
+import { ColaboradoresPermanentesDesactivarComponent } from './colaboradores-permanentes-desactivar/colaboradores-permanentes-desactivar.component';
 
 
 
@@ -95,6 +95,18 @@ export class ColaboradoresPermanentesComponent implements OnInit{
       width: '90%',
       data: element,
       disableClose: true
+    })
+  }
+
+  OpenDialogDesactivarColaborador(element:any){
+    const dialogRef = this.dialog.open(ColaboradoresPermanentesDesactivarComponent, {
+      width: '90%',
+      data: element,
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(datos => {
+      this.genEmpleadosPermanentes()
     })
   }
 

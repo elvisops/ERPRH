@@ -25,6 +25,7 @@ import { ActivarColaboradorComponent } from './colaboradores-permanentes/colabor
 import { ConfirmationDialogComponentComponent } from './colaboradores-permanentes/colaboradores-inactivos/activar-colaborador/confirmation-dialog-component/confirmation-dialog-component.component';
 import { DatePipe } from '@angular/common';
 import { ColaboradoresPermanentesEditarComponent } from './colaboradores-permanentes/colaboradores-permanentes-editar/colaboradores-permanentes-editar.component';
+import { ColaboradoresPermanentesDesactivarComponent } from './colaboradores-permanentes/colaboradores-permanentes-desactivar/colaboradores-permanentes-desactivar.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ColaboradoresPermanentesEditarComponent } from './colaboradores-permane
     ActivarColaboradorComponent,
     ConfirmationDialogComponentComponent,
     ColaboradoresPermanentesEditarComponent,
+    ColaboradoresPermanentesDesactivarComponent,
     // DatePipe,
     
   ],

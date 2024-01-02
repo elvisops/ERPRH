@@ -135,6 +135,27 @@ export class ColaboradoresPermanentesService {
     )
   }
 
+  EditarColaborador(identidad: string,nombre: string,puesto: number,profesion: string,estadoCivil: any,idMarcacion: string,
+    fechaNacimiento: string,marcador: string,telefonos: string,locker: string,correo: string,codEmpleado: number,fechaIngreso: string,
+    domicilio: string,idArea: number,idCartera: number,idProyecto: number,idSupervisor: number,
+    inicioPermanencia: string,finContrato: string,idPermisoContrato: number,idPermisoRedOPS: number,
+    salario: number,idTipo: number,comision: number,idSexo: number,hijos: number,observacion: string, urlImg: string):Observable<any>{
+    var payload = this.auth.mkpayload({
+      proc: "SP_MODIFICAR_EMPLEADO",
+      identidad: identidad,nombre: nombre,locker: locker,codEmpleado: codEmpleado,idMarcacion: idMarcacion,marcador: marcador,
+      profesion: profesion,fechaNacimiento: fechaNacimiento,domicilio: domicilio,telefonos: telefonos,
+      fechaIngreso: fechaIngreso,estadoCivil:estadoCivil,idArea: idArea,idCartera: idCartera,idProyecto: idProyecto,
+      inicioPermanencia: inicioPermanencia,finContrato: finContrato,observacion:observacion,urlImg: urlImg,puesto: puesto,
+      idSupervisor: idSupervisor,idPermisoRedOPS: idPermisoRedOPS,idPermisoContrato: idPermisoContrato,correo: correo,
+      idTipo: idTipo,salario: salario,comision: comision,idSexo: idSexo,hijos: hijos
+    })
+    return this.http.post(`${this.api}/apiERP/proc`,{ payload})
+    .pipe(
+      tap(),
+      catchError(this.handleError("Error al agregar el colaborador"))
+    )
+  }
+
   Mostrar(year: string, month: string, filtro: string):Observable<any>{
     // year = '2023'
     // month = '1'
@@ -197,6 +218,24 @@ export class ColaboradoresPermanentesService {
     )
   }
 
+  Desactivar(identidad:string,idMotivo:number,Motivo:string,fechaBaja:string,comentario:string,recontratacion:string,comentarioPorque:string):Observable<any>{
+    var payload = this.auth.mkpayload({
+      proc: "SP_DESACTIVAR_EMPLEADO",
+      identidad: identidad,
+      idMotivo: idMotivo,
+      Motivo: Motivo,
+      fechaBaja: fechaBaja,
+      comentario: comentario,
+      recontratacion: recontratacion,
+      comentarioPorque: comentarioPorque
+    })
+    return this.http.post(`${this.api}/apiERP/proc`,{ payload})
+    .pipe(
+      tap(),
+      catchError(this.handleError("Error al registrar la bitacora"))
+    )
+  }
+
   notificacion(msg: string):void{
     this.snack.open(msg, "Cerrar",{
       horizontalPosition: "center",
@@ -213,3 +252,5 @@ export class ColaboradoresPermanentesService {
     }
   }
 }
+
+
